@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const env = require('dotenv');
 const app = express()
@@ -24,6 +24,7 @@ const run = async () => {
         await client.connect();
         const database = client.db('Doc-App');
         const doctorsCollection = database.collection('all-doctors');
+        const bookDoctors = database.collection("appointment")
         // Data Add Api 
         app.post('/all-doctor', async (req, res) => {
             const user = req.body;
@@ -38,7 +39,21 @@ const run = async () => {
             res.send(result);
         });
 
-        
+        // Doctors-Details Data
+
+        app.get('/all-doctors/:id', async (req, res) => {
+            const { id } = req.params;
+            const query = { _id: new ObjectId(id) };
+            const result = await doctorsCollection.findOne(query);
+            res.send(result);
+        })
+
+        // Appointment Doctor Api 
+        app.post('/appointments', async (req, res) => {
+            const user = req.body;
+            const result = await bookDoctors.insertOne(user);
+            res.send(result)
+        })
 
 
         await client.db("admin").command({ ping: 1 });

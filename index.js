@@ -98,14 +98,11 @@ const run = async () => {
 
         // Top Rated Doctors Api
         app.get('/top-doctors', async (req, res) => {
-            const result = await doctorsCollection
-                .find()
-                .sort({ rating: -1 })
-                .limit(3)
+            const result = await doctorsCollection.find().sort({ rating: -1 }).limit(3)
                 .toArray();
             res.send(result);
         });
-        
+
         // Profile Edit Api
         app.patch('/profile/:id', async (req, res) => {
             const { id } = req.params;
@@ -114,9 +111,11 @@ const run = async () => {
                 { _id: new ObjectId(id) },
                 { $set: updateData }
             )
-            res.send(updateUser)
+            res.json(updateUser)
         })
 
+
+        
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
